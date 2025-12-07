@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! ❤️</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* --- Color Variables & Reset --- */
+        :root {
+            --bg-pink: #ffe3e3;
+            --dark-pink: #ff4d6d;
+            --soft-pink: #ffb3c1;
+            --deep-red: #a4133c;
+            --text-color: #590d22;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-pink);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Dancing Script', cursive; }
+
+        /* --- Music Button --- */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        #playMusicBtn {
+            padding: 12px 25px;
+            border-radius: 50px;
+            background: var(--dark-pink);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        #playMusicBtn:hover { transform: scale(1.05); background-color: var(--deep-red); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white; 
+
+            /* Background Image */
+            background: url('ved.jpg'); 
+            
+            background-size: cover;       
+            background-position: center;  
+            background-attachment: fixed; 
+        }
+
+        /* Overlay - UPDATED: Pink layer removed */
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            /* background: rgba(255, 77, 109, 0.4);  <-- OLD PINK LAYER */
+            background: transparent; /* NEW: No color layer */
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 15px;
+            /* Added slightly stronger shadow for readability since pink layer is gone */
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+        }
+        .hero p {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* --- HEARTBEAT BUTTON --- */
+        @keyframes heartbeat {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255, 77, 109, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 109, 0); }
+        }
+
+        .btn-main {
+            padding: 18px 45px;
+            font-size: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            background: linear-gradient(45deg, #ff4d6d, #ff8fa3);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.5);
+            animation: heartbeat 2s infinite; 
+            transition: all 0.3s ease;
+        }
+        .btn-main:hover {
+            background: linear-gradient(45deg, #d63384, #ff4d6d);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(214, 51, 132, 0.6);
+        }
+
+        /* --- Timeline --- */
+        .timeline-section { padding: 60px 20px; text-align: center; background: white;}
+        .timeline-section h2 { font-size: 3.5rem; margin-bottom: 40px; color: var(--dark-pink); }
+        .timeline {
+            max-width: 800px; margin: 0 auto;
+            border-left: 4px solid var(--soft-pink);
+            padding-left: 30px; text-align: left;
+        }
+        .timeline-item { margin-bottom: 40px; position: relative; }
+        .timeline-item::before {
+            content: '❤'; position: absolute; left: -44px; top: 0px;
+            width: 25px; height: 25px; background-color: var(--dark-pink);
+            color: white; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 0.8rem; border: 3px solid white;
+        }
+        .timeline-date { color: var(--dark-pink); font-weight: 700; font-size: 1rem; margin-bottom: 8px; }
+        .timeline-content {
+            background: var(--bg-pink); padding: 25px;
+            border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .timeline-content h3 { color: var(--deep-red); margin-bottom: 10px; font-size: 1.5rem;}
+
+        /* --- Gallery & Lightbox Effect --- */
+        .gallery { padding: 60px 20px; text-align: center; }
+        .gallery h2 { font-size: 3.5rem; margin-bottom: 10px; color: var(--dark-pink); }
+        .gallery p { margin-bottom: 40px; color: var(--text-color); }
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; max-width: 1000px; margin: 0 auto;
+        }
+        .card img {
+            width: 100%; height: 300px; object-fit: cover;
+            border-radius: 20px; border: 4px solid white;
+            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.2); 
+            transition: all 0.4s ease;
+            cursor: pointer; 
+        }
+        .card img:hover { 
+            transform: scale(1.05) rotate(-2deg); 
+            filter: brightness(1.1);
+            box-shadow: 0 15px 30px rgba(255, 77, 109, 0.4);
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            padding-top: 50px; 
+            left: 0; top: 0; width: 100%; height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.9); 
+            opacity: 0; transition: opacity 0.3s ease;
+            align-items: center; justify-content: center;
+        }
+        .lightbox.show { display: flex; opacity: 1; }
+        
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            max-width: 90%; max-height: 90vh;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            transform: scale(0.8); transition: transform 0.3s ease;
+        }
+        .lightbox.show .lightbox-content { transform: scale(1); }
+
+        .close-btn {
+            position: absolute; top: 20px; right: 35px;
+            color: #f1f1f1; font-size: 40px; font-weight: bold;
+            transition: 0.3s; cursor: pointer;
+        }
+
+        /* --- Flip Cards --- */
+        .reasons { padding: 60px 20px; text-align: center; background-color: white; }
+        .reasons h2 { font-size: 3.5rem; color: var(--dark-pink); margin-bottom: 10px; }
+        .cards-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 40px; }
+        .flip-card {
+            background-color: transparent; width: 260px; height: 320px;
+            perspective: 1000px; cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative; width: 100%; height: 100%; text-align: center;
+            transition: transform 0.8s; transform-style: preserve-3d;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-radius: 20px;
+        }
+        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute; width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 20px; padding: 20px;
+        }
+        .flip-card-front { background: linear-gradient(45deg, var(--dark-pink), var(--deep-red)); color: white; }
+        .flip-card-front h3 { font-size: 2.2rem; }
+        .flip-card-back {
+            background-color: var(--bg-pink); color: var(--text-color);
+            transform: rotateY(180deg); border: 4px solid var(--dark-pink);
+        }
+
+        /* --- Message & Footer --- */
+        .message { padding: 80px 20px; text-align: center; }
+        .message-box {
+            background: white; padding: 50px; border-radius: 30px;
+            max-width: 700px; margin: 0 auto;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
+            border: 3px dashed var(--soft-pink);
+        }
+        footer { background: var(--dark-pink); color: white; text-align: center; padding: 30px; font-weight: 600;}
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .lightbox-content { max-width: 95%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="lightboxModal" class="lightbox" onclick="closeLightbox(event)">
+        <span class="close-btn">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+    <div class="music-control">
+        <button id="playMusicBtn">🎵 Play Our Song</button>
+        <audio id="bgMusic" loop>
+            <source src="music.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Happy Birthday, <span class="highlight">My Love!</span> 💖</h1>
+            <p>To the most beautiful person in my world.</p>
+            <button onclick="celebrate()" class="btn-main">A Little Something for You 💝</button>
+        </div>
+    </header>
+
+    <section class="timeline-section" id="timeline-start">
+        <h2>Our Story So Far... ⏳</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-date">The Beginning</div>
+                <div class="timeline-content">
+                    <h3>When We First Met</h3>
+                    <p>You felt like a forever I had just found. One look… and my heart knew the love💗</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">The Magic</div>
+                <div class="timeline-content">
+                    <h3>Falling in Love</h3>
+                    <p>You make love feel easy. With you, every day shines a little brighter.✨🥹</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Today</div>
+                <div class="timeline-content">
+                    <h3>Your Special Day</h3>
+                    <p>Celebrating you ❤ my joy, my love.💗 You deserve all the happiness in the world.🌍🧿</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery">
+        <h2>Our Favorite Memories 📸</h2>
+        <p>(Click an image to enlarge)</p>
+        <div class="grid">
+            
+            <div class="card">
+                <img src="ved1.jpg" alt="Memory 1" onclick="openLightbox(this.src)">
+            </div>
+            
+            <div class="card">
+                <img src="ved2.jpg" alt="Memory 2" onclick="openLightbox(this.src)">
+            </div>
+            
+            <div class="card">
+                <img src="ved3.jpg" alt="Memory 3" onclick="openLightbox(this.src)">
+            </div>
+            
+            <div class="card">
+                <img src="ved4.jpg" alt="Memory 4" onclick="openLightbox(this.src)">
+            </div>
+            
+            <div class="card">
+                <img src="VED5.jpg" alt="Memory 5" onclick="openLightbox(this.src)">
+            </div>
+            
+            <div class="card">
+                <img src="VED6.jpg" alt="Memory 6" onclick="openLightbox(this.src)">
+            </div>
+
+        </div>
+    </section>
+
+    <section class="reasons">
+        <h2>Why I Adore You ❤️</h2>
+        <p>(Tap the cards to flip them!)</p>
+        
+        <div class="cards-container">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front"><h3>Your Heart</h3></div>
+                    <div class="flip-card-back"><p>You are the kindest person I know.</p></div>
+                </div>
+            </div>
+
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front"><h3>Your Smile</h3></div>
+                    <div class="flip-card-back"><p>It lights up the room.</p></div>
+                </div>
+            </div>
+
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front"><h3>Us</h3></div>
+                    <div class="flip-card-back"><p>We make the best team.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="message">
+        <div class="message-box">
+            <h2>My Wish for You 💌</h2>
+            <p>
+                Happy Birthday, sweetheart. <br><br>
+                Thank you for being my partner and my best friend.
+                I hope this year brings you all the happiness you deserve.
+                <br><br>zubaan meri, zikar tera
+                Rooh meri par fikar teri..❤🫂
+                <br>
+                Love always 💌<br>
+                <strong>FROM Vedaaaa💌</strong>
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p>Made with all my love for you. ❤️</p>
+    </footer>
+
+    <script>
+        // --- LIGHTBOX LOGIC ---
+        const lightboxModal = document.getElementById('lightboxModal');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        function openLightbox(src) {
+            lightboxModal.style.display = "flex";
+            setTimeout(() => {
+                 lightboxModal.classList.add('show');
+            }, 10);
+            lightboxImg.src = src;
+        }
+
+        function closeLightbox(event) {
+            if (event.target !== lightboxImg) {
+                lightboxModal.classList.remove('show');
+                setTimeout(() => {
+                    lightboxModal.style.display = "none";
+                }, 300);
+            }
+        }
+
+        // --- CONFETTI ---
+        function celebrate() {
+            var section = document.getElementById('timeline-start');
+            if(section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 999 };
+
+            function randomInOut(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInOut(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInOut(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        // --- MUSIC ---
+        const playBtn = document.getElementById('playMusicBtn');
+        const music = document.getElementById('bgMusic');
+        let isPlaying = false;
+
+        if(playBtn && music) {
+            playBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    music.pause();
+                    playBtn.innerText = "🎵 Play Our Song";
+                    playBtn.style.background = "var(--dark-pink)";
+                } else {
+                    music.play().then(() => {
+                        playBtn.innerText = "⏸️ Pause Song";
+                        playBtn.style.background = "var(--deep-red)";
+                    }).catch(error => {
+                        alert("Tap the screen once, then try the music button again!");
+                    });
+                }
+                isPlaying = !isPlaying;
+            });
+        }
+
+        // --- MOBILE FLIP ---
+        document.querySelectorAll('.flip-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.querySelector('.flip-card-inner').style.transform = 
+                    card.querySelector('.flip-card-inner').style.transform === 'rotateY(180deg)' 
+                    ? 'rotateY(0deg)' : 'rotateY(180deg)';
+            });
+        });
+    </script>
+</body>
+</html>
